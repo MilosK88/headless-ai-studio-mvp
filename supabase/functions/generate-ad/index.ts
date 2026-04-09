@@ -9,8 +9,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// THE GOVERNANCE LAYER: The unchangeable brand aesthetic
-const FOXELLI_MASTER_PROMPT = ". Shot with a 50mm lens. High-end outdoor tactical brand commercial photography. Muted earth tones, cinematic lighting, ultra-photorealistic, 8k resolution, razor-sharp focus on the product."
+// UPDATED GOVERNANCE LAYER: Enforcing physical boundaries and structural integrity
+const FOXELLI_MASTER_PROMPT = ". The product is professionally staged, respecting its physical material properties—maintaining structural integrity for rigid items and natural draping with realistic folds for fabrics. Ensure logical placement on surfaces with ambient occlusion shadows at contact points and no clipping or merging between the product and environment. Shot with a 50mm lens. High-end outdoor brand photography, cinematic lighting, ultra-photorealistic, 8k, razor-sharp focus on the product."
 
 serve(async (req) => {
   // 2. Intercept and Approve CORS Preflight

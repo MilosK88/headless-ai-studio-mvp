@@ -363,3 +363,16 @@ body.light-mode #resultImage {
   letter-spacing: 0.5px;
   transition: opacity 0.3s ease;
 }
+/* --- LIGHT MODE PROGRESS CORRECTION --- */
+body.light-mode .progress-track {
+  background-color: rgba(0, 0, 0, 0.08); /* A very light, subtle track */
+}
+
+body.light-mode .progress-fill {
+  background-color: var(--accent-amber); /* Uses the blueprint blue */
+  box-shadow: 0 0 8px rgba(0, 85, 255, 0.3); /* Adds a faint technical glow */
+}
+
+body.light-mode .telemetry-timer {
+  color: var(--text-primary); /* Keeps the timer stark and readable */
+}
