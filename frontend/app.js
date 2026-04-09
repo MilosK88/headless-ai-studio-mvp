@@ -126,6 +126,7 @@ generateBtn.addEventListener("click", async () => {
   // 1. Lock UI & Reset Visuals
   generateBtn.disabled = true;
   resultImage.style.display = "none";
+  resultImage.removeAttribute("src"); // SURGICAL FIX: Purge the ghost image from memory
 
   // Trigger autoscroll to result area immediately
   slowScrollTo(".result-section");
@@ -201,16 +202,31 @@ generateBtn.addEventListener("click", async () => {
     if (edgeError)
       throw new Error(`Edge Function failed: ${edgeError.message}`);
 
-    // ... existing code ...
     console.log("4. Pipeline Complete!");
-    resultImage.src = edgeData.url;
-    resultImage.style.display = "block";
 
-    // NEW: Reveal the download button
-    downloadBtn.style.display = "block";
+    // INSTITUTIONAL-GRADE FIX: Await the background image decode before releasing the loader
+    await new Promise((resolve) => {
+      const preloader = new Image();
 
-    // Final scroll adjustment to center the generated asset
-    slowScrollTo(".result-section");
+      preloader.onload = () => {
+        resultImage.src = edgeData.url;
+        resultImage.style.display = "block";
+        downloadBtn.style.display = "block";
+        slowScrollTo(".result-section");
+        resolve();
+      };
+
+      preloader.onerror = () => {
+        // Fallback logic
+        resultImage.src = edgeData.url;
+        resultImage.style.display = "block";
+        downloadBtn.style.display = "block";
+        slowScrollTo(".result-section");
+        resolve();
+      };
+
+      preloader.src = edgeData.url;
+    });
   } catch (error) {
     console.error("Pipeline Error:", error);
     // REPLACED: Catch block now routes errors to the custom modal
