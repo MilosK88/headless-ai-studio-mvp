@@ -63,8 +63,16 @@
       </div>
 
       <div class="loading-state" id="loadingState" style="display: none">
-        <p>> ESTABLISHING UPLINK...</p>
-        <p>> COMPILING PIXEL MATRICES... [WAIT 15s]</p>
+        <div class="telemetry-header">
+          <span class="telemetry-label">> INFERENCE PIPELINE ACTIVE</span>
+          <span class="telemetry-timer" id="loadingTimer">00:00</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div class="telemetry-status" id="loadingStatus">
+          > INITIATING HANDSHAKE...
+        </div>
       </div>
 
       <div class="result-section">

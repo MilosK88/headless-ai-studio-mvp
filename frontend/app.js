@@ -13,6 +13,11 @@ const generateBtn = document.getElementById("generateBtn");
 const loadingState = document.getElementById("loadingState");
 const resultImage = document.getElementById("resultImage");
 
+// New elements for the Bespoke Loader
+const progressFill = document.getElementById("progressFill");
+const loadingStatus = document.getElementById("loadingStatus");
+const loadingTimer = document.getElementById("loadingTimer");
+
 // --- Theme Toggle Logic ---
 const themeToggle = document.getElementById("themeToggle");
 
@@ -25,6 +30,21 @@ themeToggle.addEventListener("click", () => {
     themeToggle.textContent = "[ THEME : DARK ]";
   }
 });
+
+/**
+ * BESPOKE SLOW SCROLL
+ * Navigates the viewport to the result section with a smooth,
+ * high-end transition to ensure user focus.
+ */
+const slowScrollTo = (targetId) => {
+  const element = document.querySelector(targetId);
+  if (element) {
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }
+};
 
 // 3. The Core Execution Pipeline
 generateBtn.addEventListener("click", async () => {
@@ -40,10 +60,52 @@ generateBtn.addEventListener("click", async () => {
     return;
   }
 
-  // Lock the UI
+  // 1. Lock UI & Reset Visuals
   generateBtn.disabled = true;
-  loadingState.style.display = "block";
   resultImage.style.display = "none";
+
+  // Trigger autoscroll to result area immediately
+  slowScrollTo(".result-section");
+
+  // 2. Initialize the Bespoke Loader
+  loadingState.style.display = "flex";
+  progressFill.style.width = "0%";
+  progressFill.style.transition = "none"; // Reset instantly
+
+  // Force a browser reflow so the transition reset takes effect
+  void progressFill.offsetWidth;
+
+  // RECALIBRATED: 35-second smooth fill to 95% to match observed server time
+  progressFill.style.transition = "width 35s cubic-bezier(0.1, 0.7, 0.1, 1)";
+  progressFill.style.width = "95%";
+
+  // 3. The Telemetry Text Cycler (Expanded for 35s window)
+  const statuses = [
+    "> COMPILING PIXEL MATRICES...",
+    "> ESTABLISHING CLOUD UPLINK...",
+    "> ISOLATING TARGET ASSET...",
+    "> ENFORCING BRAND GOVERNANCE...",
+    "> ANALYZING LIGHTING VECTORS...",
+    "> ENHANCING MICRO-TEXTURES...",
+    "> FINALIZING 4K RENDER...",
+  ];
+  let statusIndex = 0;
+
+  const statusInterval = setInterval(() => {
+    loadingStatus.style.opacity = "0";
+    setTimeout(() => {
+      statusIndex = (statusIndex + 1) % statuses.length;
+      loadingStatus.textContent = statuses[statusIndex];
+      loadingStatus.style.opacity = "1";
+    }, 300);
+  }, 5000); // Changes text every 5 seconds to match the 35s pacing
+
+  // 4. The Timer
+  let seconds = 0;
+  const timerInterval = setInterval(() => {
+    seconds++;
+    loadingTimer.textContent = `00:${seconds.toString().padStart(2, "0")}`;
+  }, 1000);
 
   try {
     console.log("1. Uploading to Supabase Storage...");
@@ -51,7 +113,6 @@ generateBtn.addEventListener("click", async () => {
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `uploads/${fileName}`;
 
-    // FIX: Using supabaseClient
     const { error: uploadError } = await supabaseClient.storage
       .from("foxelli-assets")
       .upload(filePath, file);
@@ -59,7 +120,6 @@ generateBtn.addEventListener("click", async () => {
     if (uploadError) throw new Error(`Upload failed: ${uploadError.message}`);
 
     console.log("2. Retrieving Public URL...");
-    // FIX: Using supabaseClient
     const { data: publicUrlData } = supabaseClient.storage
       .from("foxelli-assets")
       .getPublicUrl(filePath);
@@ -67,7 +127,6 @@ generateBtn.addEventListener("click", async () => {
     const publicImageUrl = publicUrlData.publicUrl;
 
     console.log("3. Pinging Edge Function...", publicImageUrl);
-    // FIX: Using supabaseClient
     const { data: edgeData, error: edgeError } =
       await supabaseClient.functions.invoke("generate-ad", {
         body: {
@@ -82,12 +141,24 @@ generateBtn.addEventListener("click", async () => {
     console.log("4. Pipeline Complete!");
     resultImage.src = edgeData.url;
     resultImage.style.display = "block";
+
+    // Final scroll adjustment to center the generated asset
+    slowScrollTo(".result-section");
   } catch (error) {
     console.error("Pipeline Error:", error);
     alert(error.message);
   } finally {
-    // Unlock the UI
-    generateBtn.disabled = false;
-    loadingState.style.display = "none";
+    // Cleanup the bespoke loader
+    clearInterval(statusInterval);
+    clearInterval(timerInterval);
+
+    // Snap progress to 100% on completion
+    progressFill.style.transition = "width 0.5s ease-out";
+    progressFill.style.width = "100%";
+
+    setTimeout(() => {
+      loadingState.style.display = "none";
+      generateBtn.disabled = false;
+    }, 500);
   }
 });
