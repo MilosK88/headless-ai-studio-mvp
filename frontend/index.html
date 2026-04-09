@@ -29,40 +29,48 @@
       </header>
 
       <div class="upload-section tactical-zone">
-        <div class="input-group">
-          <span class="data-label">01 // TARGET ASSET [UPLOAD PNG]</span>
-          <div class="file-wrapper">
-            <input type="file" id="imageInput" accept="image/png, image/jpeg" />
+  
+  <div class="input-group">
+    <span class="data-label">01 // TARGET ASSET [UPLOAD PNG]</span>
+    <div class="file-wrapper custom-file-upload">
+      <input type="file" id="imageInput" accept="image/png, image/jpeg" class="hidden-file-input" />
+      <label for="imageInput" id="fileLabel" class="file-proxy-label">
+        <span class="btn-browse">[ SELECT ASSET ]</span>
+        <span id="fileNameDisplay" class="file-name-display">NO ASSET DETECTED</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="input-group">
+    <span class="data-label">02 // STAGING DIRECTIVE [PROMPT]</span>
+
+    <div class="system-notice">
+      <div class="notice-header">// COMPILER GOVERNANCE ACTIVE</div>
+      <div class="notice-body">
+        <p class="notice-global">Engine auto-enforces: <strong>50mm lens, studio lighting, 8k resolution.</strong></p>
+        
+        <div class="notice-grid">
+          <div class="notice-col">
+            <span class="col-title">[ APPAREL ]</span>
+            <span class="col-desc">Requires physical support. Avoid "sitting".</span>
+            <span class="col-ex">> "Draped over a mossy log"</span>
+          </div>
+          <div class="notice-col">
+            <span class="col-title">[ EQUIPMENT ]</span>
+            <span class="col-desc">Requires logical surface placement.</span>
+            <span class="col-ex">> "Resting on an alpine rock"</span>
           </div>
         </div>
-
-        <div class="input-group">
-          <span class="data-label">02 // STAGING DIRECTIVE [PROMPT]</span>
-
-          <div class="system-notice">
-            <span class="notice-header">// COMPILER ACTIVE:</span>
-
-            Engine enforces brand aesthetic (50mm lens, studio lighting, 8k
-            resolution, razor-sharp focus) and physical structure. For apparel,
-            avoid "sitting." Use staging verbs for better physics. <br />
-
-            <span class="notice-example"
-              >> EXAMPLE: For apparel - "draped over a mossy log" or "hanging
-              from a rustic wooden hook", for objects such a backpack - "Sitting
-              on a rock in an alpine stream"
-            </span>
-          </div>
-
-          <textarea
-            id="promptInput"
-            placeholder="> ENTER ENVIRONMENT PARAMETERS..."
-          ></textarea>
-        </div>
-
-        <button id="generateBtn" class="btn-execute">
-          <span>[ EXECUTE RENDER ]</span>
-        </button>
       </div>
+    </div>
+
+    <textarea id="promptInput" placeholder="> ENTER ENVIRONMENT PARAMETERS..."></textarea>
+  </div>
+
+  <button id="generateBtn" class="btn-execute">
+    <span>[ EXECUTE RENDER ]</span>
+  </button>
+</div>
 
       <div class="loading-state" id="loadingState" style="display: none">
         <div class="telemetry-header">
@@ -91,6 +99,22 @@
     </div>
       </div>
     </div>
+
+    <div id="customModal" class="custom-modal-overlay" style="display: none;">
+  <div class="custom-modal-box">
+    <div class="modal-header">
+      <span class="col-title" style="font-size: 14px;">// SYSTEM EXCEPTION</span>
+    </div>
+    <div class="modal-body" id="modalMessage">
+      AWAITING DIRECTIVE...
+    </div>
+    <div class="modal-footer">
+      <button id="closeModalBtn" class="btn-execute" style="width: auto; padding: 6px 16px; font-size: 12px; margin: 0;">
+        <span>[ ACKNOWLEDGE ]</span>
+      </button>
+    </div>
+  </div>
+</div>
 
     <script src="app.js"></script>
   </body>

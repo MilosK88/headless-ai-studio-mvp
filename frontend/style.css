@@ -388,3 +388,182 @@ body.light-mode #downloadBtn {
   border-color: var(--text-primary);
   color: var(--text-primary);
 }
+/* --- CUSTOM FILE UPLOAD --- */
+.hidden-file-input {
+  display: none; /* Kills the ugly default browser UI */
+}
+
+.file-proxy-label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.file-proxy-label:hover {
+  border-color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-browse {
+  font-weight: bold;
+  color: #fff; /* Adjust to your primary text color */
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
+.file-name-display {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+body.light-mode .file-proxy-label {
+  border-color: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.02);
+}
+body.light-mode .btn-browse {
+  background: rgba(0, 0, 0, 0.1);
+  color: #000;
+}
+body.light-mode .file-name-display {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* --- SYSTEM NOTICE GRID (SCANNABILITY) --- */
+.system-notice {
+  border-left: 2px solid #00ff00; /* Use your green variable here */
+  padding: 12px;
+  background: rgba(0, 255, 0, 0.05);
+  margin-bottom: 16px;
+}
+
+.notice-header {
+  color: #00ff00;
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.notice-global {
+  font-size: 12px;
+  margin-bottom: 12px;
+  opacity: 0.8;
+}
+
+.notice-grid {
+  display: flex;
+  gap: 16px;
+}
+
+.notice-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  border-radius: 2px;
+}
+
+body.light-mode .notice-col {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.col-title {
+  font-weight: bold;
+  font-size: 11px;
+  color: #ffaa00; /* Use your warning/amber color */
+  letter-spacing: 1px;
+}
+
+.col-desc {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+.col-ex {
+  font-size: 11px;
+  font-family: monospace;
+  color: #ffaa00;
+  margin-top: 4px;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+  .notice-grid {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .file-proxy-label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+/* --- CUSTOM EXCEPTION MODAL --- */
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.custom-modal-box {
+  background: #0a0a0a;
+  border: 1px solid #ffaa00; /* Uses your amber warning color */
+  width: 90%;
+  max-width: 400px;
+  padding: 24px;
+  box-shadow: 0 0 20px rgba(255, 170, 0, 0.1);
+}
+
+.modal-header {
+  margin-bottom: 16px;
+  border-bottom: 1px dashed rgba(255, 170, 0, 0.3);
+  padding-bottom: 8px;
+}
+
+.modal-body {
+  font-family: monospace;
+  color: #fff;
+  font-size: 13px;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Light Mode Overrides */
+body.light-mode .custom-modal-overlay {
+  background: rgba(255, 255, 255, 0.85);
+}
+body.light-mode .custom-modal-box {
+  background: #ffffff;
+  border-color: #ffaa00;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+body.light-mode .modal-body {
+  color: #000;
+}

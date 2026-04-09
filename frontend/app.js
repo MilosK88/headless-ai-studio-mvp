@@ -13,6 +13,11 @@ const generateBtn = document.getElementById("generateBtn");
 const loadingState = document.getElementById("loadingState");
 const resultImage = document.getElementById("resultImage");
 const downloadBtn = document.getElementById("downloadBtn");
+const fileNameDisplay = document.getElementById("fileNameDisplay"); // NEW: For custom file UI
+
+const customModal = document.getElementById("customModal");
+const modalMessage = document.getElementById("modalMessage");
+const closeModalBtn = document.getElementById("closeModalBtn");
 
 // New elements for the Bespoke Loader
 const progressFill = document.getElementById("progressFill");
@@ -30,6 +35,27 @@ themeToggle.addEventListener("click", () => {
   } else {
     themeToggle.textContent = "[ THEME : DARK ]";
   }
+});
+
+// --- Custom File Upload UI Handler ---
+imageInput.addEventListener("change", (e) => {
+  if (e.target.files && e.target.files.length > 0) {
+    // Show the actual file name instead of "NO ASSET DETECTED"
+    fileNameDisplay.textContent = `> ${e.target.files[0].name}`;
+    fileNameDisplay.style.color = "var(--text-primary)";
+  } else {
+    fileNameDisplay.textContent = "NO ASSET DETECTED";
+  }
+});
+
+// --- Custom System Exception Modal Logic ---
+const showSystemAlert = (message) => {
+  modalMessage.textContent = `> ERR: ${message}`;
+  customModal.style.display = "flex";
+};
+
+closeModalBtn.addEventListener("click", () => {
+  customModal.style.display = "none";
 });
 
 /**
@@ -59,7 +85,9 @@ downloadBtn.addEventListener("click", async () => {
     document.body.removeChild(a);
   } catch (error) {
     console.error("Download failed:", error);
-    alert("Failed to download image. Try right-clicking and 'Save Image As'.");
+    showSystemAlert(
+      "Failed to download image. Try right-clicking and 'Save Image As'.",
+    );
   }
 });
 
@@ -83,12 +111,15 @@ generateBtn.addEventListener("click", async () => {
   const file = imageInput.files[0];
   const prompt = promptInput.value;
 
+  // REPLACED: Using the new pristine modal instead of browser alerts
   if (!file) {
-    alert("Please upload an image first.");
+    showSystemAlert("MISSING_TARGET_ASSET. Please upload a PNG/JPEG.");
     return;
   }
   if (!prompt) {
-    alert("Please enter a staging prompt.");
+    showSystemAlert(
+      "MISSING_STAGING_DIRECTIVE. Please enter environment parameters.",
+    );
     return;
   }
 
@@ -182,7 +213,8 @@ generateBtn.addEventListener("click", async () => {
     slowScrollTo(".result-section");
   } catch (error) {
     console.error("Pipeline Error:", error);
-    alert(error.message);
+    // REPLACED: Catch block now routes errors to the custom modal
+    showSystemAlert(error.message);
   } finally {
     // Cleanup the bespoke loader
     clearInterval(statusInterval);
