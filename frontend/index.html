@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LUKUL ASSET PIPELINE // FOXELLI CONFIGURATION</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  </head>
+  <body>
+    <div class="terminal-container">
+      <header
+        class="terminal-header"
+        style="
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+        "
+      >
+        <div>
+          <div class="tech-warning">// FOXELI_AI ASSET PROTOCOL_</div>
+          <h1 class="brand-title">IMAGE GENERATION TERMINAL</h1>
+          <div class="status-bar">
+            <span class="status-indicator blink"></span>
+            <span class="status-text">SYSTEM ONLINE & SECURE</span>
+          </div>
+        </div>
+        <button id="themeToggle" class="btn-theme">[ THEME : DARK ]</button>
+      </header>
+
+      <div class="upload-section tactical-zone">
+        <div class="input-group">
+          <span class="data-label">01 // TARGET ASSET [UPLOAD PNG]</span>
+          <div class="file-wrapper">
+            <input type="file" id="imageInput" accept="image/png, image/jpeg" />
+          </div>
+        </div>
+
+        <div class="input-group">
+          <span class="data-label">02 // STAGING DIRECTIVE [PROMPT]</span>
+
+          <div class="system-notice">
+            <span class="notice-header">// COMPILER ACTIVE:</span>
+            The rendering engine automatically enforces the Foxelli master
+            aesthetic (50mm lens, studio lighting, 8k resolution, razor-sharp
+            focus). Do not write a complex prompt. Simply define the surface and
+            background environment. <br />
+            <span class="notice-example"
+              >> EXAMPLE: "sitting on a snowy boulder next to an alpine
+              stream"</span
+            >
+          </div>
+
+          <textarea
+            id="promptInput"
+            placeholder="> ENTER ENVIRONMENT PARAMETERS..."
+          ></textarea>
+        </div>
+
+        <button id="generateBtn" class="btn-execute">
+          <span>[ EXECUTE RENDER ]</span>
+        </button>
+      </div>
+
+      <div class="loading-state" id="loadingState" style="display: none">
+        <p>> ESTABLISHING UPLINK...</p>
+        <p>> COMPILING PIXEL MATRICES... [WAIT 15s]</p>
+      </div>
+
+      <div class="result-section">
+        <span class="data-label">// FINAL OUTPUT UPLINK</span>
+        <div class="image-wrapper">
+          <img id="resultImage" src="" alt="" style="display: none" />
+          <div class="terminal-placeholder">AWAITING DIRECTIVE...</div>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

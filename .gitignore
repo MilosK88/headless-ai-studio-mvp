@@ -1,0 +1,25 @@
+# --- Security & Credentials ---
+# STRICTLY IGNORE ALL ENVIRONMENT VARIABLES
+.env
+.env.local
+.env.*
+*.pem
+
+# --- Supabase Local Architecture ---
+# Ignore local database states and Docker volumes
+supabase/.temp/
+supabase/.branch/
+supabase/migrations/*_local.sql
+
+# --- Node & Dependencies ---
+# Ignore downloaded packages if you installed Deno/NPM types locally
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# --- Editor & OS Artifacts ---
+# Prevents messy IDE configurations from uploading
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

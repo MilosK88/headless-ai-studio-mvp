@@ -1,0 +1,312 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Mono:wght@400;700&display=swap");
+
+:root {
+  --bg-void: #050505;
+  --panel-bg: #0a0a0c;
+  --border-tech: #333333;
+  --border-active: #ffffff;
+  --text-primary: #e0e0e0;
+  --text-muted: #666666;
+  --accent-terminal: #00ff00; /* The MEBC green */
+  --accent-amber: #ffb000;
+
+  --font-main: "Inter", sans-serif;
+  --font-mono: "Space Mono", monospace;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-main);
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  min-height: 100vh;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 30px 30px; /* Subtle drafting grid */
+}
+
+.terminal-container {
+  width: 100%;
+  max-width: 850px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+/* Headers & Typography */
+.tech-warning {
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+
+.brand-title {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 16px;
+}
+
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-tech);
+  background: var(--panel-bg);
+  width: fit-content;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent-terminal);
+  border-radius: 50%;
+}
+
+.status-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-terminal);
+  letter-spacing: 1px;
+}
+
+.blink {
+  animation: blinker 2s linear infinite;
+}
+
+@keyframes blinker {
+  50% {
+    opacity: 0;
+  }
+}
+
+.data-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+/* Tactical Zone (Inputs) */
+.tactical-zone {
+  background-color: var(--panel-bg);
+  border: 1px solid var(--border-tech);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* File Input Hack */
+.file-wrapper {
+  position: relative;
+}
+
+input[type="file"] {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px dashed var(--border-tech);
+  padding: 12px;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+input[type="file"]:hover {
+  border-color: var(--text-primary);
+}
+
+input[type="file"]::file-selector-button {
+  background: var(--text-primary);
+  color: var(--bg-void);
+  border: none;
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-weight: bold;
+  cursor: pointer;
+  margin-right: 16px;
+  text-transform: uppercase;
+}
+
+/* Textarea */
+textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 16px;
+  background-color: var(--bg-void);
+  border: 1px solid var(--border-tech);
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.6;
+  outline: none;
+  resize: vertical;
+  transition: all 0.2s;
+}
+
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+textarea:focus {
+  border-color: var(--accent-amber);
+  box-shadow: inset 2px 0 0 var(--accent-amber);
+}
+
+/* Button */
+.btn-execute {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--text-primary);
+  padding: 16px 32px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+.btn-execute:hover {
+  background-color: var(--text-primary);
+  color: var(--bg-void);
+}
+
+.btn-execute:disabled {
+  border-color: var(--border-tech);
+  color: var(--border-tech);
+  cursor: not-allowed;
+  background: transparent;
+}
+
+/* Loading Terminal */
+.loading-state {
+  font-family: var(--font-mono);
+  color: var(--accent-amber);
+  font-size: 13px;
+  border-left: 2px solid var(--accent-amber);
+  padding-left: 16px;
+  line-height: 2;
+}
+
+/* Results */
+.result-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.image-wrapper {
+  background-color: var(--panel-bg);
+  border: 1px solid var(--border-tech);
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.terminal-placeholder {
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+#resultImage {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border: 4px solid var(--panel-bg); /* acts as a matte inside the border */
+}
+
+/* Hide placeholder when image is shown */
+#resultImage[style*="display: block"] + .terminal-placeholder {
+  display: none;
+}
+/* --- THEME TOGGLE BUTTON --- */
+.btn-theme {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding-bottom: 8px; /* Aligns with the bottom of the header */
+}
+
+.btn-theme:hover {
+  color: var(--text-primary);
+}
+
+/* --- DIEGETIC INSTRUCTIONS --- */
+.system-notice {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 16px;
+  padding: 12px;
+  border-left: 2px solid var(--accent-terminal);
+  background-color: rgba(255, 255, 255, 0.02); /* Very subtle highlight */
+}
+
+.notice-header {
+  color: var(--accent-terminal);
+  font-weight: 700;
+}
+
+.notice-example {
+  color: var(--accent-amber);
+  display: block;
+  margin-top: 8px;
+}
+
+/* --- LIGHT MODE: TECHNICAL BLUEPRINT AESTHETIC --- */
+body.light-mode {
+  --bg-void: #f4f4f5; /* Technical paper off-white */
+  --panel-bg: #ffffff; /* Pure white for depth */
+  --border-tech: #1a1a1a; /* Stark black borders */
+  --text-primary: #050505; /* Absolute black text */
+  --text-muted: #555555;
+  --accent-terminal: #d32f2f; /* Switch green to tactical red */
+  --accent-amber: #0055ff; /* Switch amber to blueprint blue */
+
+  /* Invert the drafting grid to be dark on light */
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+}
+
+/* Specific light mode overrides for subtlety */
+body.light-mode .system-notice {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+body.light-mode #resultImage {
+  border-color: #ffffff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15); /* Adds shadow since the image might blend into white */
+}
