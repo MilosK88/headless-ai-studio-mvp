@@ -12,6 +12,7 @@ const promptInput = document.getElementById("promptInput");
 const generateBtn = document.getElementById("generateBtn");
 const loadingState = document.getElementById("loadingState");
 const resultImage = document.getElementById("resultImage");
+const downloadBtn = document.getElementById("downloadBtn");
 
 // New elements for the Bespoke Loader
 const progressFill = document.getElementById("progressFill");
@@ -28,6 +29,37 @@ themeToggle.addEventListener("click", () => {
     themeToggle.textContent = "[ THEME : LIGHT ]";
   } else {
     themeToggle.textContent = "[ THEME : DARK ]";
+  }
+});
+
+/**
+ * DOWNLOAD HANDLER
+ * Fetches the image as a blob to bypass CORS and triggers a local download.
+ */
+downloadBtn.addEventListener("click", async () => {
+  const imageUrl = resultImage.src;
+  if (!imageUrl) return;
+
+  try {
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.style.display = "none";
+    a.href = url;
+    // Named with a unique timestamp for the user
+    a.download = `LUKUL_ASSET_${Date.now()}.png`;
+
+    document.body.appendChild(a);
+    a.click();
+
+    // Cleanup
+    window.URL.revokeObjectURL(url);
+    document.body.removeChild(a);
+  } catch (error) {
+    console.error("Download failed:", error);
+    alert("Failed to download image. Try right-clicking and 'Save Image As'.");
   }
 });
 
@@ -138,9 +170,13 @@ generateBtn.addEventListener("click", async () => {
     if (edgeError)
       throw new Error(`Edge Function failed: ${edgeError.message}`);
 
+    // ... existing code ...
     console.log("4. Pipeline Complete!");
     resultImage.src = edgeData.url;
     resultImage.style.display = "block";
+
+    // NEW: Reveal the download button
+    downloadBtn.style.display = "block";
 
     // Final scroll adjustment to center the generated asset
     slowScrollTo(".result-section");

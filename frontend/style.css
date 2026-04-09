@@ -376,3 +376,15 @@ body.light-mode .progress-fill {
 body.light-mode .telemetry-timer {
   color: var(--text-primary); /* Keeps the timer stark and readable */
 }
+.result-header {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Ensure the button looks consistent in light mode too */
+body.light-mode #downloadBtn {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
