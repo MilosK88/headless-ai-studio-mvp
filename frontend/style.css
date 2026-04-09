@@ -567,3 +567,30 @@ body.light-mode .custom-modal-box {
 body.light-mode .modal-body {
   color: #000;
 }
+/* --- MOBILE UI/UX PERFECTION --- */
+@media (max-width: 600px) {
+  /* 1. Main Header & Theme Toggle Fix */
+  .terminal-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 16px;
+  }
+  
+  .btn-theme {
+    white-space: nowrap; /* Forces text to stay on one line */
+  }
+
+  /* 2. Output Header & Download Button Fix */
+  .result-header {
+    flex-direction: column !important;
+    align-items: stretch !important; /* Stretches the button to fill the width */
+    gap: 12px;
+  }
+
+  #downloadBtn {
+    white-space: nowrap;
+    width: 100%; /* Transforms into a massive, easy-to-tap block button */
+    text-align: center;
+    padding: 12px !important; /* Increases the touch target size */
+  }
+}
