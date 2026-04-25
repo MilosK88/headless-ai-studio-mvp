@@ -107,64 +107,68 @@ const slowScrollTo = (targetId) => {
 };
 
 // 3. The Core Execution Pipeline
+
+/**
+ * BESPOKE POLLING ENGINE
+ * Communicates with the Edge Router to check GPU status without triggering timeouts.
+ */
+async function pollFalQueue(actionType, modelPath, payload) {
+  // 1. Submit the job
+  const startReq = await supabaseClient.functions.invoke("generate-ad", {
+    body: { action: actionType, ...payload }
+  });
+
+  if (startReq.error) throw new Error(startReq.error.message);
+  if (!startReq.data.success) throw new Error(startReq.data.error);
+
+  const reqId = startReq.data.requestId;
+
+  // 2. Poll every 2 seconds
+  while (true) {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    const checkReq = await supabaseClient.functions.invoke("generate-ad", {
+      body: { action: 'check_status', requestId: reqId, model: modelPath }
+    });
+
+    if (checkReq.error) throw new Error(checkReq.error.message);
+    if (!checkReq.data.success) throw new Error(checkReq.data.error);
+
+    if (checkReq.data.status === 'COMPLETED') {
+      return checkReq.data.data; // Returns the payload containing image URLs
+    } else if (checkReq.data.status === 'FAILED') {
+      throw new Error("GPU_INFERENCE_FAILED");
+    }
+    // If IN_PROGRESS or IN_QUEUE, the loop continues natively
+  }
+}
+
 generateBtn.addEventListener("click", async () => {
   const file = imageInput.files[0];
   const prompt = promptInput.value;
 
-  // REPLACED: Using the new pristine modal instead of browser alerts
   if (!file) {
     showSystemAlert("MISSING_TARGET_ASSET. Please upload a PNG/JPEG.");
     return;
   }
   if (!prompt) {
-    showSystemAlert(
-      "MISSING_STAGING_DIRECTIVE. Please enter environment parameters.",
-    );
+    showSystemAlert("MISSING_STAGING_DIRECTIVE. Please enter environment parameters.");
     return;
   }
 
   // 1. Lock UI & Reset Visuals
   generateBtn.disabled = true;
   resultImage.style.display = "none";
-  resultImage.removeAttribute("src"); // SURGICAL FIX: Purge the ghost image from memory
-
-  // Trigger autoscroll to result area immediately
+  resultImage.removeAttribute("src");
   slowScrollTo(".result-section");
 
   // 2. Initialize the Bespoke Loader
   loadingState.style.display = "flex";
   progressFill.style.width = "0%";
-  progressFill.style.transition = "none"; // Reset instantly
+  progressFill.style.transition = "none";
+  void progressFill.offsetWidth; // Reflow
 
-  // Force a browser reflow so the transition reset takes effect
-  void progressFill.offsetWidth;
-
-  // RECALIBRATED: 35-second smooth fill to 95% to match observed server time
-  progressFill.style.transition = "width 35s cubic-bezier(0.1, 0.7, 0.1, 1)";
-  progressFill.style.width = "95%";
-
-  // 3. The Telemetry Text Cycler (Expanded for 35s window)
-  const statuses = [
-    "> COMPILING PIXEL MATRICES...",
-    "> ESTABLISHING CLOUD UPLINK...",
-    "> ISOLATING TARGET ASSET...",
-    "> ENFORCING BRAND GOVERNANCE...",
-    "> ANALYZING LIGHTING VECTORS...",
-    "> ENHANCING MICRO-TEXTURES...",
-    "> FINALIZING 4K RENDER...",
-  ];
-  let statusIndex = 0;
-
-  const statusInterval = setInterval(() => {
-    loadingStatus.style.opacity = "0";
-    setTimeout(() => {
-      statusIndex = (statusIndex + 1) % statuses.length;
-      loadingStatus.textContent = statuses[statusIndex];
-      loadingStatus.style.opacity = "1";
-    }, 300);
-  }, 5000); // Changes text every 5 seconds to match the 35s pacing
-
-  // 4. The Timer
+  // 3. The Timer (Independent from UI steps)
   let seconds = 0;
   const timerInterval = setInterval(() => {
     seconds++;
@@ -172,77 +176,88 @@ generateBtn.addEventListener("click", async () => {
   }, 1000);
 
   try {
-    console.log("1. Uploading to Supabase Storage...");
+    // STEP A: CLOUD UPLINK
+    loadingStatus.textContent = "> UPLOADING ASSET TO STORAGE CLUSTER...";
+    progressFill.style.transition = "width 2s ease";
+    progressFill.style.width = "10%";
+
     const fileExt = file.name.split(".").pop();
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `uploads/${fileName}`;
 
-    const { error: uploadError } = await supabaseClient.storage
-      .from("foxelli-assets")
-      .upload(filePath, file);
-
+    const { error: uploadError } = await supabaseClient.storage.from("foxelli-assets").upload(filePath, file);
     if (uploadError) throw new Error(`Upload failed: ${uploadError.message}`);
 
-    console.log("2. Retrieving Public URL...");
-    const { data: publicUrlData } = supabaseClient.storage
-      .from("foxelli-assets")
-      .getPublicUrl(filePath);
-
+    const { data: publicUrlData } = supabaseClient.storage.from("foxelli-assets").getPublicUrl(filePath);
     const publicImageUrl = publicUrlData.publicUrl;
 
-    console.log("3. Pinging Edge Function...", publicImageUrl);
-    const { data: edgeData, error: edgeError } =
-      await supabaseClient.functions.invoke("generate-ad", {
-        body: {
-          imageUrl: publicImageUrl,
-          prompt: prompt,
-        },
-      });
+    // STEP B: IDEOGRAM INFERENCE (Replaces the blind 35s transition)
+    loadingStatus.textContent = "> EXECUTING IDEOGRAM V3 DIFFUSION... (0/2)";
+    progressFill.style.transition = "width 30s cubic-bezier(0.1, 0.7, 0.1, 1)";
+    progressFill.style.width = "50%"; // Slow crawl while generating
 
-    if (edgeError)
-      throw new Error(`Edge Function failed: ${edgeError.message}`);
-
-    console.log("4. Pipeline Complete!");
-
-    // INSTITUTIONAL-GRADE FIX: Await the background image decode before releasing the loader
-    await new Promise((resolve) => {
-      const preloader = new Image();
-
-      preloader.onload = () => {
-        resultImage.src = edgeData.url;
-        resultImage.style.display = "block";
-        downloadBtn.style.display = "block";
-        slowScrollTo(".result-section");
-        resolve();
-      };
-
-      preloader.onerror = () => {
-        // Fallback logic
-        resultImage.src = edgeData.url;
-        resultImage.style.display = "block";
-        downloadBtn.style.display = "block";
-        slowScrollTo(".result-section");
-        resolve();
-      };
-
-      preloader.src = edgeData.url;
+    const bgData = await pollFalQueue('start_generation', 'fal-ai/ideogram/v3/replace-background', {
+      imageUrl: publicImageUrl,
+      prompt: prompt
     });
-  } catch (error) {
-    console.error("Pipeline Error:", error);
-    // REPLACED: Catch block now routes errors to the custom modal
-    showSystemAlert(error.message);
-  } finally {
-    // Cleanup the bespoke loader
-    clearInterval(statusInterval);
-    clearInterval(timerInterval);
+    const bgUrl = bgData.images[0].url;
 
-    // Snap progress to 100% on completion
+    // STEP C: AURA-SR UPSCALE
+    loadingStatus.textContent = "> EXECUTING AURA-SR 4K UPSCALE... (1/2)";
+    progressFill.style.transition = "width 25s cubic-bezier(0.1, 0.7, 0.1, 1)";
+    progressFill.style.width = "85%"; // Slow crawl while upscaling
+
+    const upscaleData = await pollFalQueue('start_upscale', 'fal-ai/aura-sr', {
+      imageUrl: bgUrl
+    });
+    const finalImageUrl = upscaleData.image.url;
+
+    // STEP D: AUDIT & FINALIZE
+    loadingStatus.textContent = "> SECURING AUDIT LOG...";
+    progressFill.style.transition = "width 1s ease";
+    progressFill.style.width = "95%";
+
+    await supabaseClient.functions.invoke("generate-ad", {
+      body: {
+        action: 'save_audit',
+        originalUrl: publicImageUrl,
+        finalUrl: finalImageUrl,
+        prompt: prompt
+      }
+    });
+
+    // STEP E: RENDER
+    loadingStatus.textContent = "> PIPELINE COMPLETE. DECODING ASSET...";
     progressFill.style.transition = "width 0.5s ease-out";
     progressFill.style.width = "100%";
 
+    await new Promise((resolve) => {
+      const preloader = new Image();
+      preloader.onload = () => {
+        resultImage.src = finalImageUrl;
+        resultImage.style.display = "block";
+        downloadBtn.style.display = "block";
+        slowScrollTo(".result-section");
+        resolve();
+      };
+      preloader.onerror = () => {
+        resultImage.src = finalImageUrl;
+        resultImage.style.display = "block";
+        downloadBtn.style.display = "block";
+        slowScrollTo(".result-section");
+        resolve();
+      };
+      preloader.src = finalImageUrl;
+    });
+
+  } catch (error) {
+    console.error("Pipeline Error:", error);
+    showSystemAlert(error.message);
+  } finally {
+    clearInterval(timerInterval);
     setTimeout(() => {
       loadingState.style.display = "none";
       generateBtn.disabled = false;
-    }, 500);
+    }, 800);
   }
 });
