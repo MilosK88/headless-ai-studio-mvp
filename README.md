@@ -4,6 +4,8 @@ A headless, multi-step AI inference pipeline built to automate brand-consistent 
 
 This implementation utilizes a custom Serverless Edge Function compiler to silently enforce camera, lighting, and environmental rules against user prompts. By abstracting the prompt engineering away from the end-user, this architecture reduces a 40-minute manual compositing workflow into a 15-second, single-click deployment while strictly maintaining brand aesthetic governance.
 
+> 🛡️ **Ecosystem Governance:** Developed as an internal B2B automation tool by [LuKul Atelier](https://lukulatelier.com/). This specific inference pipeline accelerates visual asset deployment for our proprietary FemTech ecosystem, the [IronSilk App](https://ironsilk.app/).
+
 ## 🏗️ The Architecture
 
 This repository operates as a monorepo, separating the client interface from the secure inference logic and database operations.
